@@ -1,0 +1,320 @@
+#include<stdio.h>
+#include<string.h>
+#include<conio.h>
+void input();
+void display();
+void search();
+void searchById();
+void searchByname();
+void modify();
+void del();
+void sort();
+void sortById();
+
+struct student
+{
+    char na[50];
+    char id[20];
+    char dep[30];
+    char sem[10];
+    char sec[20];
+    char gen[20];
+    float cgpa;
+}s;
+FILE *fp;
+void main()
+{
+    int ch;
+    while(1)
+    {
+        printf("\n\t\t\tDaffodil International University\t\t\t\n\n");
+        printf("\t\t\t   Student Management System\n\n\n");
+        printf("1.Add student\n\n");
+        printf("2.Show all student info\n\n");
+        printf("3.Search\n\n");
+        printf("4.Modify\n\n");
+        printf("5.Delete\n\n");
+        printf("6.Sort\n\n");
+        printf("0.Exit\n\n");
+        printf("Enter your option: ");
+        scanf("%d",&ch);
+
+        switch(ch)
+{
+
+    case 0:
+    exit(0);
+
+    case 1:
+    input();
+    break;
+
+    case 2:
+    display();
+    break;
+
+    case 3:
+    search();
+    break;
+
+    case 4:
+        modify();
+        break;
+    case 5:
+        del();
+        break;
+    case 6:
+        sort();
+        break;
+
+
+}
+getch();
+    }
+}
+
+
+//int malecnt= 0;
+
+void input()
+{
+    fp=fopen("st.txt","ab");
+    printf("Enter Student Name: ");
+    fflush(stdin);
+    gets(s.na);
+    printf("Enter Id: ");
+    scanf("%s",&s.id);
+    printf("Enter Department: ");
+    scanf("%s",&s.dep);
+    printf("Enter Semester: ");
+    scanf("%s",&s.sem);
+    printf("Enter Section: ");
+    scanf("%s",&s.sec);
+    printf("Enter Gender: ");
+    scanf("%s",&s.gen);
+    printf("Enter Cgpa: ");
+    scanf("%f",&s.cgpa);
+
+    //if(s.gen=="Male")malecnt++;
+    fwrite(&s,sizeof(s),1,fp);
+    printf("Record save successfully. . .");
+    fclose(fp);
+
+}
+void display()
+{
+    printf("\n\t\t\t\tStudent Info\t\t\t\n\n");
+    printf("%-12s      %-12s %-11s%-11s%-11s%-10s%s\n","Name","Id","Department","Semester","Section","Gender","CGPA");
+
+
+    fp=fopen("st.txt","rb");
+    while(fread(&s,sizeof(s),1,fp)==1)
+          {
+              printf("%-12s      %-12s  %-11s%-11s%-11s%-10s%.2f\n",s.na,s.id,s.dep,s.sem,s.sec,s.gen,s.cgpa);
+          }
+
+          fclose(fp);
+          printf("Press any key to continue. . .");
+
+}
+void search()
+{
+    int ch;
+    while(1)
+    {
+
+        printf("Student Management System\n");
+        printf("Search\n");
+        printf("1.Search by Id\n");
+        printf("2.Search by Name\n");
+        printf("0.Back to the Main menu\n");
+        printf("Enter your Option: \n");
+        scanf("%d",&ch);
+
+        switch(ch)
+        {
+            case 0:
+                main();
+                break;
+            case 1:
+                searchById();
+                break;
+            case 2:
+                searchByname();
+                break;
+            default:
+                printf("Invaild Option\n");
+        }
+        getch();
+    }
+}
+void searchById()
+{
+    char id[20];
+    int f=0;
+    printf("Enter Id: ");
+    scanf("%s",&id);
+    printf("%-12s      %-12s %-11s%-11s%-11s%-10s%s\n","Name","Id","Department","Semester","Section","Gender","CGPA");
+    fp=fopen("st.txt","rb");
+    while(fread(&s,sizeof(s),1,fp)==1)
+    {
+        if(strcmpi(id,s.id)==0)
+        {
+            f=1;
+            printf("%-12s      %-12s  %-11s%-11s%-11s%-10s%.2f\n",s.na,s.id,s.dep,s.sem,s.sec,s.gen,s.cgpa);
+            break;
+        }
+    }
+    fclose(fp);
+    if(f==0)
+    printf("Record Not Found . . .\n");
+
+    else
+        printf("Record Found Successfully . . .\n");
+}
+void searchByname()
+{
+    char na[50];
+    int f=0;
+   printf("Enter Name: ");
+   fflush(stdin);
+   gets(na);
+   printf("%-12s      %-12s %-11s%-11s%-11s%-10s%s\n","Name","Id","Department","Semester","Section","Gender","CGPA");
+   fp=fopen("st.txt","rb");
+    while(fread(&s,sizeof(s),1,fp)==1)
+    {
+        if(strcmpi(na,s.na)==0)
+        {
+            f=1;
+            printf("%-12s      %-12s  %-11s%-11s%-11s%-10s%.2f\n",s.na,s.id,s.dep,s.sem,s.sec,s.gen,s.cgpa);
+            break;
+        }
+    }
+    fclose(fp);
+    if(f==0)
+    printf("Record Not Found . . .\n");
+
+    else
+        printf("Record Found Successfully . . .\n");
+}
+void modify()
+{
+    char id[20];
+    int f=0;
+    printf("Enter Id to Modify: ");
+    scanf("%s",&id);
+    fp=fopen("st.txt","rb+");
+    while(fread(&s,sizeof(s),1,fp)==1)
+    {
+        if(strcmpi(id,s.id)==0)
+        {
+            f=1;
+            printf("Enter New Name: ");
+            fflush(stdin);
+            gets(s.na);
+            printf("Enter New Semester: ");
+            scanf("%s",&s.sem);
+            printf("Enter New Section: ");
+            scanf("%s",&s.sec);
+            printf("Enter New Cgpa: ");
+            scanf("%f",&s.cgpa);
+            fseek(fp,-sizeof(s),1);
+            fwrite(&s,sizeof(s),1,fp);
+            fclose(fp);
+            break;
+        }
+    }
+    if(f==0)
+        printf("Record Not Found . . .");
+    else
+        printf("Modified Successfully");
+}
+void del()
+{
+    char id[20];
+    int f=0;
+    printf("Enter Id to Delete: ");
+    scanf("%s",&id);
+
+    FILE *ft;
+    fp = fopen("st.txt","rb");
+    ft = fopen("temp.txt","ab");
+
+    while(fread(&s,sizeof(s),1,fp)==1)
+    {
+        if(strcmpi(id,s.id)==0)
+        {
+            f=1;
+        }
+        else
+        {
+            fwrite(&s,sizeof(s),1,ft);
+        }
+    }
+    fclose(fp);
+    fclose(ft);
+    remove("st.txt");
+    rename("temp.txt","st.txt");
+
+    if(f==0)
+    printf("Record Not Found . . . ");
+    else
+        printf("Record Deleted Successfully . . .");
+
+}
+void sort()
+{
+    int ch;
+    while(1)
+    {
+
+        printf("Student Management System\n");
+        printf("Sort\n");
+        printf("1.Sort by Id\n");
+        printf("0.Back to the Main menu\n");
+        printf("Enter your Option: \n");
+        scanf("%d",&ch);
+
+        switch(ch)
+        {
+            case 0:
+                main();
+                break;
+            case 1:
+                sortById();
+                break;
+            default:
+                printf("Invaild Option\n");
+        }
+        getch();
+    }
+}
+void sortById()
+{
+
+    int c=0,i,j;
+    struct student s1[50],t;
+    printf("Student Management System\n");
+    printf("Sort By Id\n");
+    fp=fopen("st.txt","rb");
+    while(fread(&s,sizeof(s),1,fp)==1)
+    s1[c++]=s;
+
+    for(i=0;i<c-1;i++)
+    {
+        for(j=i+1;j<c;j++)
+        {
+            if(s1[i].id>s1[j].id)
+            {
+                t=s1[i];
+                s1[i]=s1[j];
+                s1[j]=t;
+            }
+        }
+    }
+    printf("%-12s      %-12s %-11s%-11s%-11s%-10s%s\n\n","Name","Id","Department","Semester","Section","Gender","CGPA");
+    for(i=0;i<c;i++)
+
+    printf("%-12s      %-12s  %-11s%-11s%-11s%-10s%.2f\n",s1[i].na,s1[i].id,s1[i].dep,s1[i].sem,s1[i].sec,s1[i].gen,s1[i].cgpa);
+
+}
